@@ -1,0 +1,84 @@
+// ============================================
+// Bounded Context: User Management
+// ============================================
+
+/// Check constraint: birth_date <= CURRENT_DATE
+model User {
+  id_user     Int           @id @default(autoincrement())
+  lname       String
+  name        String
+  mname       String?
+  gender      gender?
+  birth_date  DateTime?     @db.Date
+  created_at  DateTime?     @default(now()) @db.Timestamp(6)
+  Doctor      Doctor?
+  Patient     Patient?
+  Account     Account?
+  UserContact UserContact[]
+
+  @@map("User")
+}
+
+model Account {
+  id_account String  @id @default(uuid(7))
+  id_user    Int?    @unique
+  user       User?   @relation(fields: [id_user], references: [id_user], onDelete: Cascade, onUpdate: NoAction)
+  username   String  @unique
+  password   String?
+  roles      Role[]
+}
+
+model Role {
+  id_role  Int       @id @default(autoincrement())
+  name     String    @unique
+  accounts Account[]
+}
+
+/// Контактная информация (отдельно т.к. может быть несколько контактов)
+/// Check constraints:
+/// - PHONE IS NOT NULL OR EMAIL IS NOT NULL
+/// - EMAIL ~* '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$' (if EMAIL is not null)
+/// - PHONE ~ '^\+?[1-9]\d{1,14}$' (if PHONE is not null)
+model UserContact {
+  id_contact Int      @id @default(autoincrement())
+  id_user    Int
+  phone      String?
+  email      String?
+  is_primary Boolean? @default(false)
+  User       User     @relation(fields: [id_user], references: [id_user], onDelete: Cascade, onUpdate: NoAction)
+
+  @@unique([id_user, email])
+  @@unique([id_user, phone])
+  @@index([id_user], map: "usercontact_id_user_fkey")
+  @@map("UserContact")
+}
+
+/// Check constraints:
+/// - SERIES > 0 AND SERIES < 10000
+/// - NUMBER > 0 AND NUMBER <= 1000000
+/// - ISSUE_DATE IS NULL OR ISSUE_DATE <= CURRENT_DATE
+model Passport {
+  id_passport Int       @id @default(autoincrement())
+  series      Int
+  number      Int
+  issued_by   String?
+  issue_date  DateTime? @db.Date
+  Patient     Patient?
+
+  @@unique([series, number])
+  @@map("Passport")
+}
+
+model Address {
+  id_address  Int       @id @default(autoincrement())
+  country     String?   @default("Россия")
+  region      String?
+  city        String
+  street      String?
+  house       String?
+  apartment   String?
+  postal_code String?
+  Patient     Patient[]
+
+  @@map("Address")
+}

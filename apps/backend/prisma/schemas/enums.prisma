@@ -1,0 +1,27 @@
+enum appointment_status {
+  scheduled
+  completed
+  cancelled
+  no_show
+}
+
+enum day_of_week {
+  monday
+  tuesday
+  wednesday
+  thursday
+  friday
+  saturday
+  sunday
+}
+
+enum gender {
+  m
+  w
+}
+
+enum op {
+  INSERT
+  UPDATE
+  DELETE
+}

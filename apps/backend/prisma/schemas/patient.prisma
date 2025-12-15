@@ -1,0 +1,20 @@
+// ============================================
+// Bounded Context: Patient Management
+// ============================================
+
+/// Пациенты
+model Patient {
+  id_patient        Int           @id @default(autoincrement())
+  id_user           Int           @unique
+  id_passport       Int?          @unique
+  id_address        Int?
+  insurance_policy  String?       @unique
+  registration_date DateTime?     @default(dbgenerated("CURRENT_DATE")) @db.Date
+  Appointment       Appointment[]
+  Address           Address?      @relation(fields: [id_address], references: [id_address], onDelete: NoAction, onUpdate: NoAction)
+  Passport          Passport?     @relation(fields: [id_passport], references: [id_passport], onDelete: NoAction, onUpdate: NoAction)
+  User              User          @relation(fields: [id_user], references: [id_user], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([id_user], map: "patient_id_user_fkey")
+  @@map("Patient")
+}

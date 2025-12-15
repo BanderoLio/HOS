@@ -1,0 +1,72 @@
+// ============================================
+// Views
+// ============================================
+
+view V_DOCTOR_STATISTICS {
+  id_doctor                  Int
+  doctor_full_name           String?   @map("DOCTOR_FULL_NAME")
+  license_number             String?   @map("LICENSE_NUMBER")
+  experience_years           Int?      @map("EXPERIENCE_YEARS")
+  hire_date                  DateTime? @map("HIRE_DATE") @db.Date
+  total_appointments         BigInt?   @map("TOTAL_APPOINTMENTS")
+  completed_appointments     BigInt?   @map("COMPLETED_APPOINTMENTS")
+  cancelled_appointments     BigInt?   @map("CANCELLED_APPOINTMENTS")
+  no_show_appointments       BigInt?   @map("NO_SHOW_APPOINTMENTS")
+  scheduled_appointments     BigInt?   @map("SCHEDULED_APPOINTMENTS")
+  appointments_last_30_days  BigInt?   @map("APPOINTMENTS_LAST_30_DAYS")
+  completed_last_30_days     BigInt?   @map("COMPLETED_LAST_30_DAYS")
+  appointments_current_month BigInt?   @map("APPOINTMENTS_CURRENT_MONTH")
+  unique_patients            BigInt?   @map("UNIQUE_PATIENTS")
+  specializations            String?   @map("SPECIALIZATIONS")
+
+  @@map("V_DOCTOR_STATISTICS")
+}
+
+view V_DAILY_APPOINTMENTS {
+  id_appointment         Int       @map("ID_APPOINTMENT")
+  appointment_date       DateTime? @map("APPOINTMENT_DATE") @db.Date
+  appointment_time       DateTime? @map("APPOINTMENT_TIME") @db.Time(6)
+  status                 String?   @map("STATUS")
+  duration               Int?      @map("DURATION")
+  complaints             String?   @map("COMPLAINTS")
+  id_doctor              Int?      @map("ID_DOCTOR")
+  doctor_full_name       String?   @map("DOCTOR_FULL_NAME")
+  doctor_specializations String?   @map("DOCTOR_SPECIALIZATIONS")
+  room_number            String?   @map("ROOM_NUMBER")
+  id_patient             Int?      @map("ID_PATIENT")
+  patient_full_name      String?   @map("PATIENT_FULL_NAME")
+  birth_date             DateTime? @map("BIRTH_DATE") @db.Date
+  patient_age            Float?    @map("PATIENT_AGE")
+  patient_phone          String?   @map("PATIENT_PHONE")
+  patient_email          String?   @map("PATIENT_EMAIL")
+  diagnoses              String?   @map("DIAGNOSES")
+  prescriptions_count    BigInt?   @map("PRESCRIPTIONS_COUNT")
+  created_at             DateTime? @map("CREATED_AT") @db.Timestamp(6)
+  updated_at             DateTime? @map("UPDATED_AT") @db.Timestamp(6)
+
+  @@map("V_DAILY_APPOINTMENTS")
+}
+
+view TEMPLATE_SLOTS {
+  id_template    Int?         @map("ID_TEMPLATE")
+  id_doctor      Int?         @map("ID_DOCTOR")
+  start_time     DateTime?    @map("START_TIME") @db.Time(6)
+  end_time       DateTime?    @map("END_TIME") @db.Time(6)
+  slot_duration  Int?         @map("SLOT_DURATION")
+  day_of_week    day_of_week? @map("DAY_OF_WEEK")
+  effective_from DateTime?    @map("EFFECTIVE_FROM") @db.Date
+  effective_to   DateTime?    @map("EFFECTIVE_TO") @db.Date
+
+  @@map("TEMPLATE_SLOTS")
+}
+
+view SPECIFIC_SLOTS {
+  id_schedule   Int?      @map("ID_SCHEDULE")
+  id_doctor     Int?      @map("ID_DOCTOR")
+  start_time    DateTime? @map("START_TIME") @db.Time(6)
+  end_time      DateTime? @map("END_TIME") @db.Time(6)
+  slot_duration Int?      @map("SLOT_DURATION")
+  work_date     DateTime? @map("WORK_DATE") @db.Date
+
+  @@map("SPECIFIC_SLOTS")
+}

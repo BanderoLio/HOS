@@ -1,0 +1,11 @@
+{
+  "version": "3.4",
+  "type": "table",
+  "title": "UserContacts",
+  "hideInSidebar": false,
+  "config": {
+    "dataSource": "postgres_k118",
+    "fetchStrategy": "databaseTable",
+    "table": "UserContact"
+  }
+}

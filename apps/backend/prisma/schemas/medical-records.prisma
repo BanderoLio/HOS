@@ -1,0 +1,60 @@
+// ============================================
+// Bounded Context: Medical Records
+// ============================================
+
+/// Справочник диагнозов (МКБ-10)
+model DiagnosisDirectory {
+  id_diagnosis     Int                @id @default(autoincrement())
+  code             String             @unique
+  name             String
+  description      String?
+  PatientDiagnosis PatientDiagnosis[]
+
+  @@map("DiagnosisDirectory")
+}
+
+model PatientDiagnosis {
+  id_patient_diagnosis Int                 @id @default(autoincrement())
+  id_appointment       Int
+  id_diagnosis         Int?
+  diagnosis_text       String
+  is_primary           Boolean?            @default(true)
+  diagnosis_date       DateTime?           @default(dbgenerated("CURRENT_DATE")) @db.Date
+  notes                String?
+  Appointment          Appointment         @relation(fields: [id_appointment], references: [id_appointment], onDelete: Cascade, onUpdate: NoAction)
+  DiagnosisDirectory   DiagnosisDirectory? @relation(fields: [id_diagnosis], references: [id_diagnosis], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([id_appointment], map: "patientdiagnosis_id_appointment_fkey")
+  @@map("PatientDiagnosis")
+}
+
+/// Справочник лекарств
+model Medication {
+  id_medication    Int            @id @default(autoincrement())
+  name             String         @unique
+  active_substance String?
+  form             String?
+  dosage           String?
+  Prescription     Prescription[]
+
+  @@map("Medication")
+}
+
+/// Check constraint: (ID_MEDICATION IS NOT NULL AND CUSTOM_MEDICATION_NAME IS NULL) OR (ID_MEDICATION IS NULL AND CUSTOM_MEDICATION_NAME IS NOT NULL)
+model Prescription {
+  id_prescription        Int         @id @default(autoincrement())
+  id_appointment         Int
+  id_medication          Int?
+  custom_medication_name String?
+  dosage                 String
+  frequency              String
+  duration               String?
+  instructions           String?
+  prescription_date      DateTime?   @default(dbgenerated("CURRENT_DATE")) @db.Date
+  is_issued              Boolean?    @default(false)
+  Appointment            Appointment @relation(fields: [id_appointment], references: [id_appointment], onDelete: Cascade, onUpdate: NoAction)
+  Medication             Medication? @relation(fields: [id_medication], references: [id_medication], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([id_appointment], map: "prescription_id_appointment_fkey")
+  @@map("Prescription")
+}

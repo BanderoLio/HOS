@@ -1,0 +1,9 @@
+{
+  "menuPageOrder": [
+    "users",
+    "userContacts",
+    "passport",
+    "appointmentsDashboard",
+    "appointments"
+  ]
+}

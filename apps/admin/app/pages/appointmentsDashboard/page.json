@@ -1,0 +1,21 @@
+{
+  "version": "3.4",
+  "type": "dashboard",
+  "title": "AppointmentsDashboard",
+  "hideInSidebar": false,
+  "config": {
+    "withDateRangePicker": true,
+    "stats": [
+      {
+        "key": "stat_wdgzr6",
+        "fetchStrategy": "rawSqlQuery",
+        "type": "ratio",
+        "dataSource": "postgres_k118",
+        "title": "Appointments created today",
+        "sqlQuery": "SELECT\n  COUNT(*)\nFROM\n  \"Appointment\"\nWHERE\n  created_at = CURRENT_DATE",
+        "sqlTotalQuery": "SELECT\n  COUNT(*)\nFROM\n  \"Appointment\""
+      }
+    ],
+    "cards": []
+  }
+}

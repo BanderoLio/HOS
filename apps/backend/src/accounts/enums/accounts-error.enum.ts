@@ -1,0 +1,4 @@
+export const AccountError = {
+  ACCOUNT_NOT_FOUND: 'ACCOUNT_NOT_FOUND',
+  USERNAME_ALREADY_EXISTS: 'USERNAME_ALREADY_EXISTS',
+} as const;

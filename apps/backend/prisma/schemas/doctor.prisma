@@ -1,0 +1,42 @@
+// ============================================
+// Bounded Context: Doctor Management
+// ============================================
+
+/// Врачи
+/// Check constraint: EXPERIENCE_YEARS >= 0
+model Doctor {
+  id_doctor            Int                    @id @default(autoincrement())
+  id_user              Int                    @unique
+  license_number       String                 @unique
+  experience_years     Int?
+  hire_date            DateTime?              @default(dbgenerated("CURRENT_DATE")) @db.Date
+  Appointment          Appointment[]
+  User                 User                   @relation(fields: [id_user], references: [id_user], onDelete: Cascade, onUpdate: NoAction)
+  DoctorSpecialization DoctorSpecialization[]
+  Schedule             Schedule[]
+  ScheduleTemplate     ScheduleTemplate[]
+
+  @@index([id_user], map: "doctor_id_user_fkey")
+  @@map("Doctor")
+}
+
+/// Специализации врачей
+model Specialization {
+  id_spec              Int                    @id @default(autoincrement())
+  name                 String                 @unique
+  description          String?
+  DoctorSpecialization DoctorSpecialization[]
+
+  @@map("Specialization")
+}
+
+model DoctorSpecialization {
+  id_doctor      Int
+  id_spec        Int
+  assigned_date  DateTime?      @default(dbgenerated("CURRENT_DATE")) @db.Date
+  Doctor         Doctor         @relation(fields: [id_doctor], references: [id_doctor], onDelete: Cascade, onUpdate: NoAction)
+  Specialization Specialization @relation(fields: [id_spec], references: [id_spec], onDelete: Cascade, onUpdate: NoAction)
+
+  @@id([id_doctor, id_spec])
+  @@map("DoctorSpecialization")
+}

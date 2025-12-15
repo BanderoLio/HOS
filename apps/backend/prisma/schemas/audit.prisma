@@ -1,0 +1,21 @@
+// ============================================
+// Bounded Context: Audit
+// ============================================
+
+model audit_delta_hist {
+  audit_id    BigInt    @id @default(autoincrement())
+  table_name  String
+  pk_data     Json
+  column_name String
+  old_value   String?
+  new_value   String?
+  operation   op
+  changed_at  DateTime? @default(now()) @db.Timestamp(6)
+
+  @@index([changed_at])
+  @@index([operation])
+  @@index([pk_data], type: Gin)
+  @@index([table_name, changed_at], map: "audit_delta_hist_table_changed_idx")
+  @@index([table_name])
+  @@map("AUDIT_DELTA_HIST")
+}

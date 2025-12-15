@@ -1,0 +1,63 @@
+// ============================================
+// Bounded Context: Scheduling
+// ============================================
+
+/// Кабинеты
+model Room {
+  id_room          Int                @id @default(autoincrement())
+  room_number      String             @unique
+  floor            Int?
+  description      String?
+  Schedule         Schedule[]
+  ScheduleTemplate ScheduleTemplate[]
+
+  @@map("Room")
+}
+
+/// Кастомное расписание врача на конкретный день
+/// Check constraints:
+/// - END_TIME > START_TIME
+/// - SLOT_DURATION > 0
+/// Exclusion constraint: предотвращает пересечение временных интервалов для одного врача в один день (только для IS_AVAILABLE = TRUE)
+model Schedule {
+  id_schedule   Int      @id @default(autoincrement())
+  id_doctor     Int
+  work_date     DateTime @db.Date
+  start_time    DateTime @db.Time(6)
+  end_time      DateTime @db.Time(6)
+  id_room       Int?
+  slot_duration Int      @default(15)
+  is_available  Boolean? @default(true)
+  notes         String?
+  Doctor        Doctor   @relation(fields: [id_doctor], references: [id_doctor], onDelete: Cascade, onUpdate: NoAction)
+  Room          Room?    @relation(fields: [id_room], references: [id_room], onDelete: NoAction, onUpdate: NoAction)
+
+  @@unique([id_doctor, work_date, start_time])
+  @@index([id_doctor, work_date], map: "schedule_doctor_date_idx")
+  @@index([id_doctor], map: "schedule_id_doctor_fkey")
+  @@index([work_date], map: "schedule_work_date_idx")
+  @@map("Schedule")
+}
+
+/// Check constraints:
+/// - END_TIME > START_TIME
+/// - SLOT_DURATION > 0
+/// - EFFECTIVE_TO IS NULL OR EFFECTIVE_TO >= EFFECTIVE_FROM
+/// Exclusion constraint: предотвращает пересечение временных интервалов и периодов действия для одного врача в один день недели
+model ScheduleTemplate {
+  id_template    Int         @id @default(autoincrement())
+  id_doctor      Int
+  day_of_week    day_of_week
+  start_time     DateTime    @db.Time(6)
+  end_time       DateTime    @db.Time(6)
+  id_room        Int?
+  slot_duration  Int         @default(15)
+  effective_from DateTime    @default(dbgenerated("CURRENT_DATE")) @db.Date
+  effective_to   DateTime?   @db.Date
+  Doctor         Doctor      @relation(fields: [id_doctor], references: [id_doctor], onDelete: Cascade, onUpdate: NoAction)
+  Room           Room?       @relation(fields: [id_room], references: [id_room], onDelete: NoAction, onUpdate: NoAction)
+
+  @@unique([id_doctor, day_of_week, start_time, effective_from])
+  @@index([id_doctor], map: "scheduletemplate_id_doctor_fkey")
+  @@map("ScheduleTemplate")
+}

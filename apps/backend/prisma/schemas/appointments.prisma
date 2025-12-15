@@ -1,0 +1,27 @@
+// ============================================
+// Bounded Context: Appointments
+// ============================================
+
+/// Check constraint: DURATION > 0
+/// Exclusion constraint: предотвращает пересечение временных интервалов для одного врача (только для STATUS != 'cancelled')
+model Appointment {
+  id_appointment   Int                 @id @default(autoincrement())
+  id_patient       Int
+  id_doctor        Int
+  appointment_time DateTime            @db.Timestamp(6)
+  duration         Int?                @default(15)
+  status           appointment_status? @default(scheduled)
+  complaints       String?
+  created_at       DateTime?           @default(now()) @db.Timestamp(6)
+  updated_at       DateTime?           @default(now()) @db.Timestamp(6)
+  Doctor           Doctor              @relation(fields: [id_doctor], references: [id_doctor], onDelete: Cascade, onUpdate: NoAction)
+  Patient          Patient             @relation(fields: [id_patient], references: [id_patient], onDelete: Cascade, onUpdate: NoAction)
+  PatientDiagnosis PatientDiagnosis[]
+  Prescription     Prescription[]
+
+  @@index([id_doctor], map: "appointment_id_doctor_fkey")
+  @@index([id_patient], map: "appointment_id_patient_fkey")
+  @@index([status], map: "appointment_status_idx")
+  @@index([appointment_time], map: "appointment_time_idx")
+  @@map("Appointment")
+}
